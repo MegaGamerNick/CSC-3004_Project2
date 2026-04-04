@@ -1,0 +1,30 @@
+pipe-message-format.txt
+Last updated: April 2026   Nicholas Betounes
+
+Request Pipe Format (sent by bibleajax.cgi ? blookupserver):
+book|chapter|verse\n
+
+Example:
+1|1|1\n
+43|3|16\n
+19|19|1\n
+
+Reply Pipe Format (sent back by blookupserver ? bibleajax.cgi):
+book|chapter|verse|verseText\n$end
+
+Example:
+1|1|1|In the beginning God created the heaven and the earth.\n$end
+
+How multi-verse requests are handled:
+The client sends one request per verse.
+For "howMany > 1", the client uses Bible::next() to get the next Ref,
+then sends a new request for that Ref.
+This matches the current server (single-verse replies).
+
+Assumptions / notes:
+- Fields separated by exactly one '|' (no spaces around |)
+- Request always ends with \n (MESSTERM from fifo.h)
+- Reply always ends with \n$end so the client knows the message is complete
+- Book numbers are 1-66 (integers), chapter and verse are positive integers
+- Server currently handles one verse per request; client loops for multiple verses
+- Pipe names: nicbetounes_request and nicbetounes_reply (SIG + "request"/"reply")
